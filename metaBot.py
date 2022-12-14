@@ -1,16 +1,39 @@
 # everything starts with meta
 import discord
 import pymongo
+import mysql.connector
 import mytoken
 
 from discord.ext import commands
 from pymongo import MongoClient
+from mysql.connector import Error
+
+
 
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
+
+# connect to MySQL
+try:
+    connection = mysql.connector.connect(host='localhost',
+                                         database='littlefish', # database name
+                                         user='littlefish', # username
+                                         password=mytoken.MySQLpassword, # password
+                                            auth_plugin='mysql_native_password')
+    if connection.is_connected():
+        db_Info = connection.get_server_info()
+        print("Connected to MySQL Server version ", db_Info)
+        cursor = connection.cursor()
+        cursor.execute("select database();")
+        record = cursor.fetchone()
+        print("You're connected to database: ", record)
+except Error as e:
+    print("Error while connecting to MySQL", e)
+    
+
 
 MongoStr = mytoken.MongoStr
 
